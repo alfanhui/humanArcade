@@ -12,4 +12,4 @@ Go into `sudo raspi-config` and change boot to `Console AutoLogin`, this will ma
 code in /etc/profile run at boot
 
 # Credit
-British English Emma voice: Text To Speech mp3's obtained from (http://www.fromtexttospeech.com/)[http://www.fromtexttospeech.com/]
+British English Emma voice: Text To Speech mp3's obtained from http://www.fromtexttospeech.com/
