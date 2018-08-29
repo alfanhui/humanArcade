@@ -42,7 +42,7 @@ def play_sound(path):
     try:
         playsound("/home/pi/Desktop/%s.mp3" % path)
     except Exception as err:
-        print(err, " Audio issue with %s" % path)
+        print(err, " Audio issue with %s.mp3" % path)
 
 
 def pair_bluetooth(mac):
