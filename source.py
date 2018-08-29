@@ -11,38 +11,68 @@
 # END INIT INFO
 
 # Co-Authored Scarlett & Stu, 2018
-
+import pygame
 from evdev import InputDevice, categorize, ecodes
-from bluetool import Bluetooth
-from playsound import playsound
+import time
+#from bluetool import Bluetooth
 
-controllerMac = "00:1F:E2:9A:A3:45"  # scarletts
-audioMac = "00:11:67:13:52:E6"  # scarletts
+#from playsound import playsound
+#import vlc
 
-# controllerMac = "DC:0C:2D:17:8B:69" #stus
-# audioMac = "" #stus
+controllerMac = "00:1F:E2:9A:A3:45"
+audioMac = "00:11:67:13:52:E6"
 
 btn_x = 304
 btn_o = 305
 btn_t = 307
 btn_s = 308
 
+forwards = "/home/pi/Desktop/Forwards.mp3"
+backwards = "/home/pi/Desktop/Backwards.mp3"
+left = "/home/pi/Desktop/Left.mp3"
+right = "/home/pi/Desktop/Right.mp3"
+start = "/home/pi/Desktop/Start.mp3"
+jump = "/home/pi/Desktop/Jump.mp3"
+duck = "/home/pi/Desktop/Duck.mp3"
+gameOn = "/home/pi/Desktop/GameOn.mp3"
+turnControllerOn = "/home/pi/Desktop/TurnControllerOn.mp3"
+
 
 def main():
     # pair_bluetooth(audioMac)
     # pair_bluetooth(controllerMac)
-    play_sound('SoundTest')
+    pygame.mixer.init()
     gamepad = get_controller_stream()
     interpret_buttons(gamepad)
-    # unpair_bluetooth(audioMac)
-    # unpair_bluetooth(controllerMac)
+# unpair_bluetooth()
+
+# playsound
+# def play_sound(path):
+#    try:
+#        playsound("/home/pi/Desktop/birds.wav")
+#    except Exception as err:
+#        print(err," Audio issue with %s.mp3"%path)
+
+# vlc
+# def play_sound(vlcFile):
+#	try:
+#		player = instance.media_player_new()
+#		media = instance.media_new(vlcFile)
+#		media.get_mrl()
+#		player.set_media(media)
+#		player.play()
+#	except Exception as err:
+#		print(err, " Audio issue with %s"%vlcFile)
+
+# pygame
 
 
 def play_sound(path):
     try:
-        playsound("/home/pi/Desktop/%s.mp3" % path)
+        pygame.mixer.music.load(path)
+        pygame.mixer.music.play()
     except Exception as err:
-        print(err, " Audio issue with %s.mp3" % path)
+        print(err, " Audio issue:%s" % path)
 
 
 def pair_bluetooth(mac):
@@ -52,21 +82,14 @@ def pair_bluetooth(mac):
     elif mac == audioMac:
         play_sound("PairingAudio")
     bluetooth = Bluetooth()
-    unpair_bluetooth(mac)
     bluetooth.remove(mac)
     if bluetooth.pair(mac):
-        play_sound("Paired")
+        play_sound("paired")
     else:
         play_sound("UnableToPair")
     bluetooth.trust(mac)
     if not bluetooth.connect(mac):
         pair_bluetooth(mac)
-
-
-def unpair_bluetooth(mac):
-    bluetooth = Bluetooth()
-    play_sound("BluetoothDisconnecting")
-    bluetooth.disconnect(mac)
 
 
 def get_controller_stream():
@@ -77,15 +100,17 @@ def get_controller_stream():
                 print("Gamepad found")
                 return gamepad
         except:
-            print("Found but throwing away " + gamepad.name)
-    print("Unable to connect to Controller, trying to repair device")
-    play_sound("TurnControllerOn")
-    pair_bluetooth(controllerMac)
+            continue
+    print("Turn the Controller On")
+    play_sound(turnControllerOn)
+    time.sleep(5)
+# pair_bluetooth(controllerMac)
     return get_controller_stream()
 
 
 def interpret_buttons(gamepad):
-    play_sound("Ready!")
+    play_sound(gameOn)
+    time.sleep(3)
     print("Ready!")
     for event in gamepad.read_loop():
         check_dpad(event)
@@ -98,17 +123,17 @@ def check_dpad(event):
         if ecodes.ABS[event.code] == 'ABS_HAT0Y':
             if event.value == -1:
                 print("up")
-                play_sound("Forward")
+                play_sound(backwards)
             elif event.value == 1:
                 print("down")
-                play_sound("Backward")
+                play_sound(forwards)
         elif ecodes.ABS[event.code] == 'ABS_HAT0X':
             if event.value == -1:
-                print("right")
-                play_sound("Left")
-            elif event.value == 1:
                 print("left")
-                play_sound("Right")
+                play_sound(right)
+            elif event.value == 1:
+                print("right")
+                play_sound(left)
 
 
 def check_buttons(event):
@@ -117,15 +142,22 @@ def check_buttons(event):
         if event.value == 1:
             if event.code == btn_x:
                 print("x")
-                play_sound("Start")
+                play_sound(start)
             elif event.code == btn_o:
                 print("o")
-                play_sound("Duck")
+                play_sound(duck)
             elif event.code == btn_t:
                 print("t")
             elif event.code == btn_s:
                 print("s")
-                play_sound("Jump")
+                play_sound(jump)
+
+
+def unpair_bluetooth():
+    bluetooth = Bluetooth()
+    play_sound("BluetoothDisconnecting")
+    bluetooth.disconnect(controllerMac)
+    bluetooth.disconnect(audioMac)
 
 
 if __name__ == "__main__":
