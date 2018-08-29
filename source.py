@@ -15,7 +15,6 @@ import pygame
 from evdev import InputDevice, categorize, ecodes
 import time
 #from bluetool import Bluetooth
-
 #from playsound import playsound
 #import vlc
 
@@ -39,12 +38,9 @@ turnControllerOn = "/home/pi/Desktop/TurnControllerOn.mp3"
 
 
 def main():
-    # pair_bluetooth(audioMac)
-    # pair_bluetooth(controllerMac)
     pygame.mixer.init()
     gamepad = get_controller_stream()
     interpret_buttons(gamepad)
-# unpair_bluetooth()
 
 # playsound
 # def play_sound(path):
@@ -73,23 +69,6 @@ def play_sound(path):
         pygame.mixer.music.play()
     except Exception as err:
         print(err, " Audio issue:%s" % path)
-
-
-def pair_bluetooth(mac):
-    print("Trying to pair bluetooth device...")
-    if mac == controllerMac:
-        play_sound("PairingController")
-    elif mac == audioMac:
-        play_sound("PairingAudio")
-    bluetooth = Bluetooth()
-    bluetooth.remove(mac)
-    if bluetooth.pair(mac):
-        play_sound("paired")
-    else:
-        play_sound("UnableToPair")
-    bluetooth.trust(mac)
-    if not bluetooth.connect(mac):
-        pair_bluetooth(mac)
 
 
 def get_controller_stream():
@@ -151,13 +130,6 @@ def check_buttons(event):
             elif event.code == btn_s:
                 print("s")
                 play_sound(jump)
-
-
-def unpair_bluetooth():
-    bluetooth = Bluetooth()
-    play_sound("BluetoothDisconnecting")
-    bluetooth.disconnect(controllerMac)
-    bluetooth.disconnect(audioMac)
 
 
 if __name__ == "__main__":
