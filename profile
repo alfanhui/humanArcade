@@ -46,5 +46,6 @@ pulseaudio --start
 echo -e 'power on \n\nconnect 00:11:67:13:52:E6 \n\nquit' | bluetoothctl
 sleep 3
 pacmd set-default-sink bluez_sink.00_11_67_13_52_E6.headset_head_unit
+echo -e 'power on \n\npair 00:1F:E2:9A:A3:45 \n\ntrust 00:1F:E2:9A:A3:45 \n\nconnect 00:1F:E2:9A:A3:45 \n\nquit' | bluetoothctl
 #this is the last line!!
 python3 /home/pi/Desktop/source.py &
